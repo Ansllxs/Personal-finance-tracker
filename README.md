@@ -1,194 +1,155 @@
 # Finance Tracker
 
-Registro personal de finanzas en **colones costarricenses (₡)** y del negocio de **crochet**.  
-App privada (una usuaria), en español, responsive (Mac / iPhone) e instalable como PWA.
+*Un rinconcito para cuidar tu plata… y tu crochet.*
 
-Sin inventar saldos: tú pones cuánto tienes; la app solo suma y resta lo que registres.
+Registro personal en **colones (₡)**, en español, solo para ti.  
+Sin inventar saldos: tú dices cuánto tienes; la app solo cuenta lo que vas anotando.
 
-**Stack:** Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · componentes estilo shadcn/ui · Recharts · Lucide · datos locales (JSON) · Supabase opcional
+Hecha con calma: rosa empolvado, crema, gingham suave y esa vibra scrapbook / coquette.  
+Funciona en Mac e iPhone, y la puedes poner en la pantalla de inicio como app.
 
-**Look:** scrapbook / coquette — rosa empolvado, crema, gingham azul, salvia, tipografía Fraunces + Nunito.
+> *Cuidar tu dinero también es cuidarte a ti.*
 
 ---
 
-## Arranque rápido
+## Empezar (es fácil)
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000). Entras directo (sin login).
+Luego abre [http://localhost:3000](http://localhost:3000)  
+Entras directo — **sin login**, sin drama.
 
-Los datos viven en `.data/store.json` (ignorado por git). Si no hay nada, se crea una base mínima: cuentas en ₡0, categorías y estructura de crochet — **sin montos inventados**.
+Tus datos se guardan solitos en `.data/store.json` (no se suben a git).  
+Si es la primera vez, te deja cuentas en ₡0 listas para que tú pongas la verdad.
 
-| Comando         | Qué hace              |
-|-----------------|-----------------------|
-| `npm run dev`   | Desarrollo            |
-| `npm run build` | Build de producción   |
-| `npm run start` | Servir el build       |
-| `npm run lint`  | ESLint                |
-
----
-
-## Qué incluye
-
-### Menú principal
-
-| Ruta | Sección | Para qué |
-|------|---------|----------|
-| `/` | **Inicio** | Disponible, ingresos/gastos del mes, últimos registros, **Sumar** (Gasté / Me entró) |
-| `/movimientos` | **Gastos** | Lista del mes, filtros, editar/borrar/duplicar |
-| `/cuentas` | **Cuentas** | Saldos reales, efectivo, banco, tarjeta |
-| `/presupuesto` | **Presupuesto** | Asignar ingreso esperado por categoría |
-| `/metas` | **Metas** | Ahorros / wishlist |
-| `/crochet` | **Crochet** | Pedidos, hechos, clientes, ventas |
-| `/ajustes` | **Más** | Perfil, categorías, exportar, reiniciar, reportes |
-
-Mes ← → en Inicio, Gastos y Presupuesto.
+| Comando | Para qué |
+|---------|----------|
+| `npm run dev` | Abrir el taller |
+| `npm run build` | Empacar para producción |
+| `npm run start` | Servir lo empacado |
+| `npm run lint` | Revisar el código |
 
 ---
 
-## Finanzas personales
+## El menú, en corto
 
-### Sumar (botón flotante)
-
-- **Gasté** — monto, categoría, de qué cuenta salió, cómo pagaste (SINPE / efectivo / transferencia).
-- **Me entró** — monto, categoría, a qué cuenta, cómo te pagaron.
-- Atajo **Entró la beca** (usa el ingreso mensual de Ajustes si lo definiste).
-- Otros: transferencia, pago de tarjeta, crochet, aporte a meta.
-
-### Cuentas
-
-- Tipos: cuenta bancaria, efectivo, tarjeta, sobre de ahorro.
-- **SINPE no es una cuenta**: es forma de pago/cobro; el dinero vive en el banco (o efectivo).
-- En cada cuenta: **Editar / poner saldo** → “¿Cuánto tienes ahora?”
-- Por mes: cuánto entró y salió en esa cuenta.
-- Tarjeta: deuda, límite, corte, día de pago (todo editable).
-
-### Presupuesto y metas
-
-- Presupuesto del mes con montos que tú defines.
-- Metas de ahorro y wishlist; aportes desde movimientos.
-
-### Reportes
-
-- En **Más → Reportes**: periodos y resúmenes (no está en la barra inferior para no saturar).
+| Dónde | Qué encuentras |
+|-------|----------------|
+| **Inicio** | Tu disponible, el mes, metas, y el botón **Sumar** |
+| **Gastos** | Todo lo que anotaste (con mes ← →) |
+| **Cuentas** | Banco, efectivo, tarjeta — saldos reales |
+| **Presupuesto** | Cómo quieres repartir el mes |
+| **Metas** | Ahorros y wishlist con cariño |
+| **Crochet** | Pedidos, hechos, clientes, ventas |
+| **Más** | Ajustes, exportar, reportes, reiniciar |
 
 ---
 
-## Crochet
+## Tu plata del día a día
 
-Hub `/crochet`: ventas del mes, pedidos activos, **por cobrar**, entregas de la semana.
+### El botón **Sumar**
 
-| Ruta | Sección |
-|------|---------|
-| `/crochet/pedidos` | Pedidos (filtros: activos, por cobrar, estado) |
-| `/crochet/productos` | **Hechos** — inventario de lo que ya tejiste |
-| `/crochet/clientes` | Clientes |
-| `/crochet/finanzas` | Vista negocio |
-| `/crochet/materiales` | Hilos / materiales |
+Es tu atajo favorito:
 
-### Pedidos
+- **Gasté** — cuánto, en qué, de qué cuenta, y cómo (SINPE / efectivo / transferencia)
+- **Me entró** — lo mismo, pero al revés (incluye atajo *Entró la beca*)
+- **Meta** — aportas a un sueño y **se rebaja** de la cuenta que elijas
 
-- Qué es, cliente, precio, fecha de entrega, estado.
-- **Ya cobrado** solo sube con **Registrar pago** (elige cuenta + SINPE/efectivo/transferencia). Así la plata sí aparece en Cuentas.
-- Filtros: Activos · Por cobrar · En proceso · Listo · Entregado · Todos.
+### Cuentas (sin mentiras)
 
-### Hechos
+- Banco, efectivo, tarjeta, sobre de ahorro — todo editable
+- **SINPE no es una cuenta aparte**: es *cómo* te mueven la plata; el dinero vive en el banco
+- Toca **Editar / poner saldo** y escribe *¿cuánto tienes ahora?* (aunque sea cero)
+- Cada cuenta te muestra qué entró y salió en el mes
 
-- Agregar lo que terminaste (+1, editar nombre/precio/nota).
-- **Registrar venta** → baja stock y crea ingreso crochet en la cuenta que elijas.
+### Presupuesto & metas
 
----
-
-## Cómo usarla día a día
-
-1. En **Cuentas**, pon cuánto tienes ahora (aunque sea ₡0).
-2. Cada gasto: **Sumar → Gasté**.
-3. Cuando te paguen / entre la beca: **Me entró** (o atajo de beca).
-4. Encargos: **Crochet → Pedidos**; al cobrar, **Registrar pago**.
-5. Tejidos listos: **Hechos**; al vender, **Registrar venta**.
-6. Fin de mes: mira Inicio / Gastos con el navegador de mes; ajusta Presupuesto si quieres.
+- Presupuesto: números tuyos, no plantillas rígidas
+- Metas: desde Inicio o desde Metas — cada aporte baja de tu cuenta y sube a la meta
 
 ---
 
-## Datos y almacenamiento
+## El rinconcito crochet
 
-- **Modo actual:** local-first. Todo en `.data/store.json`.
-- Sin login ni servidor de auth obligatorio.
-- **Ajustes:** exportar CSV, reiniciar / volver a sembrar datos, ingreso mensual esperado (para el atajo de beca).
-- No subas `.data/` ni secretos al repo (`.gitignore` ya los excluye).
+En **Crochet** ves ventas del mes, pedidos activos, por cobrar y entregas de la semana.
 
-### Supabase (opcional, futuro)
+| Rincón | Para qué |
+|--------|----------|
+| **Pedidos** | Encargos, filtros (activos, por cobrar…) |
+| **Hechos** | Lo que ya tejiste y está listo |
+| **Clientes** | Quién te pide |
+| **Finanzas / Materiales** | Si quieres ir más a fondo |
 
-Hay schema en `supabase/migrations/` y helpers de cliente. Hoy la app no depende de Supabase para funcionar.
+**Tips de oro**
 
-Si más adelante quieres Auth en la nube:
-
-1. Copia `.env.example` → `.env.local` y pon URL + anon key.
-2. Aplica la migración SQL en tu proyecto Supabase.
-3. Habría que volver a cablear las actions al cliente remoto (hoy leen/escriben el store local).
-
----
-
-## PWA
-
-- Manifest + service worker en `public/`.
-- **iPhone (Safari):** Compartir → Añadir a pantalla de inicio.
-- **Escritorio:** menú “Instalar” del navegador.
+- Cuando te paguen un pedido → **Registrar pago** (así sí llega a tu cuenta)
+- Cuando vendas un hecho → **Registrar venta** (baja del inventario y suma la plata)
 
 ---
 
-## Estructura del proyecto
+## Una rutina suave
+
+1. Pon tu saldo real en **Cuentas**
+2. Gastaste algo → **Sumar → Gasté**
+3. Entró la beca (o un pago) → **Me entró**
+4. Quieres ahorrar → **Sumar → Meta**
+5. Encargos → **Pedidos**; cobros → **Registrar pago**
+6. Terminaste un tejido → **Hechos**; lo vendiste → **Registrar venta**
+7. Fin de mes → mira Inicio / Gastos cambiando el mes
+
+---
+
+## Detrás del telón (poquito técnico)
+
+**Stack:** Next.js 16 · TypeScript · Tailwind · shadcn-ish UI · Recharts · Lucide  
+**Datos:** locales (JSON). Supabase queda como opción a futuro.
 
 ```
 src/
-  app/(app)/          # Páginas autenticadas / principales
-    page.tsx          # Inicio
-    movimientos/      # Gastos e ingresos
-    cuentas/
-    presupuesto/
-    metas/
-    crochet/          # Hub + pedidos, hechos, clientes…
-    ajustes/
-    reportes/
-  components/         # UI por dominio (accounts, crochet, transactions…)
-  lib/
-    actions/          # Server actions (cuentas, txs, crochet, etc.)
-    local-db.ts       # Lectura/escritura de .data/store.json
-    finance.ts        # Saldos, flujos del mes, pedidos
-    data.ts           # Queries al store
-    constants.ts      # Nav, labels, categorías base
-    types.ts
-public/               # PWA, iconos
-supabase/             # Migración SQL opcional
-.data/                # Datos locales (no versionar)
+  app/(app)/       → las pantallas
+  components/      → pedacitos de UI
+  lib/             → lógica, acciones, store local
+public/            → PWA e iconitos
+supabase/          → SQL opcional
+.data/             → tus datos (no versionar)
 ```
 
----
+### PWA (app en el bolsillo)
 
-## Conceptos importantes
+- **iPhone:** Safari → Compartir → *Añadir a pantalla de inicio*
+- **Mac:** el menú de “Instalar” del navegador
 
-| Concepto | Significado |
-|----------|-------------|
-| Saldo actual | Lo que pones en Cuentas; luego se mueve con gastos/ingresos |
-| SINPE | Cómo pagaste / te pagaron, no una billetera aparte |
-| Registrar pago (pedido) | Única forma de que el cobro crochet sume en la cuenta |
-| Registrar venta (hecho) | Venta de inventario + ingreso en cuenta |
-| Etiqueta personal / crochet | Separa vida diaria del negocio en reportes y filtros |
+### Supabase (si algún día quieres nube)
+
+Hay migración en `supabase/migrations/`. Hoy no hace falta.  
+Si la usas: `.env.example` → `.env.local`, y nunca subas secretos.
 
 ---
 
-## Seguridad y límites
+## Cositas a tener claras
 
-- Pensada para uso personal en tu máquina (o un deploy privado).
-- No hay conexión bancaria ni SINPE automática.
-- No inventa saldos ni deudas.
-- Si usas Supabase más adelante: RLS por `user_id`; nunca subas `.env.local`.
+| Idea | En simple |
+|------|-----------|
+| Saldo actual | Lo que *tú* escribes; después se mueve solo |
+| SINPE | Forma de pago, no billetera extra |
+| Registrar pago | El cobro del pedido que sí mueve la cuenta |
+| Registrar venta | Venta de un hecho + ingreso |
+| Aporte a meta | Ahorro que se rebaja de la cuenta |
 
 ---
 
-## Licencia / uso
+## Seguridad con cariño
 
-Proyecto personal. Úsalo, adáptalo y cuida tu plata con calma.
+- Pensada para ti, en tu compu (o un deploy privado)
+- Sin banco automático ni SINPE mágica
+- No inventa plata ni deudas
+- `.data/` y `.env.local` se quedan en casa
+
+---
+
+Hecho con calma · ₡  
+
+*Cuida cada colón… y disfruta cada puntada.*
