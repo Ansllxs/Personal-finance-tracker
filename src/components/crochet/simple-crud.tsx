@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/empty-state";
 import { MoneyAmount } from "@/components/shared/money-amount";
@@ -21,17 +21,20 @@ import {
   deleteCustomer,
   deleteMaterial,
   deleteProduct,
-  markProductSold,
+  sellProduct,
   upsertCustomer,
   upsertMaterial,
   upsertProduct,
 } from "@/lib/actions/crochet";
+import { PAYMENT_METHOD_LABELS } from "@/lib/constants";
+import { cn, toISODate } from "@/lib/utils";
 import type {
+  Account,
   CrochetCustomer,
   CrochetMaterial,
   CrochetProduct,
+  PaymentMethod,
 } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 export function CustomersClient({
   customers,
@@ -131,9 +134,17 @@ export function CustomersClient({
 }
 
 /** Inventario simple: cosas que ya tejiste */
-export function ProductsClient({ products }: { products: CrochetProduct[] }) {
+export function ProductsClient({
+  products,
+  accounts,
+}: {
+  products: CrochetProduct[];
+  accounts: Account[];
+}) {
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<CrochetProduct | null>(null);
   const [pending, startTransition] = useTransition();
+  const cashAccounts = accounts.filter((a) => a.is_active && a.type !== "credit_card");
 
   const sorted = [...products].sort((a, b) => {
     const aSoldOut = (a.stock ?? 0) <= 0 && (a.sold_count ?? 0) > 0;
@@ -155,21 +166,11 @@ export function ProductsClient({ products }: { products: CrochetProduct[] }) {
             <DialogHeader>
               <DialogTitle>Producto hecho</DialogTitle>
             </DialogHeader>
-            <form
-              className="space-y-3"
-              action={(fd) => {
+            <ProductForm
+              pending={pending}
+              onSubmit={(data) => {
                 startTransition(async () => {
-                  const res = await upsertProduct({
-                    name: String(fd.get("name")),
-                    suggested_price:
-                      Number(fd.get("suggested_price") || 0) || null,
-                    estimated_hours: null,
-                    materials_cost_estimate: 0,
-                    stock: Number(fd.get("stock") || 1),
-                    sold_count: 0,
-                    is_custom_base: false,
-                    notes: String(fd.get("notes") || "") || null,
-                  });
+                  const res = await upsertProduct({ ...data, sold_count: 0 });
                   if (res.error) toast.error(res.error);
                   else {
                     toast.success("Guardado en hechos");
@@ -177,55 +178,14 @@ export function ProductsClient({ products }: { products: CrochetProduct[] }) {
                   }
                 });
               }}
-            >
-              <div className="space-y-1.5">
-                <Label htmlFor="name">Qué hiciste</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  required
-                  placeholder="Ej. Llavero Zoro, flor tejida…"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="stock">Cuántos tienes listos</Label>
-                  <Input
-                    id="stock"
-                    name="stock"
-                    type="number"
-                    min={1}
-                    defaultValue={1}
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="suggested_price">
-                    Precio (opcional)
-                  </Label>
-                  <Input
-                    id="suggested_price"
-                    name="suggested_price"
-                    type="number"
-                    placeholder="₡"
-                  />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="notes">Nota (opcional)</Label>
-                <Input id="notes" name="notes" placeholder="Color, tamaño…" />
-              </div>
-              <Button type="submit" className="w-full" disabled={pending}>
-                Guardar
-              </Button>
-            </form>
+            />
           </DialogContent>
         </Dialog>
       </div>
       {sorted.length === 0 ? (
         <EmptyState
           title="Todavía no hay nada hecho"
-          description="Cuando termines un tejido, agrégalo aquí."
+          description="Cuando termines un tejido, agrégalo aquí. Al venderlo, registra la plata."
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -234,10 +194,7 @@ export function ProductsClient({ products }: { products: CrochetProduct[] }) {
             const ready = p.stock ?? 0;
             const soldOut = ready <= 0 && sold > 0;
             return (
-              <Card
-                key={p.id}
-                className={cn(soldOut && "opacity-70")}
-              >
+              <Card key={p.id} className={cn(soldOut && "opacity-70")}>
                 <CardContent className="space-y-3 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -259,7 +216,9 @@ export function ProductsClient({ products }: { products: CrochetProduct[] }) {
                       </div>
                       <p className="text-sm text-ink-muted">
                         {ready} listo{ready === 1 ? "" : "s"}
-                        {sold > 0 ? ` · ${sold} vendido${sold === 1 ? "" : "s"}` : ""}
+                        {sold > 0
+                          ? ` · ${sold} vendido${sold === 1 ? "" : "s"}`
+                          : ""}
                         {p.suggested_price != null
                           ? ` · ${p.suggested_price.toLocaleString("es-CR")} ₡`
                           : ""}
@@ -269,6 +228,14 @@ export function ProductsClient({ products }: { products: CrochetProduct[] }) {
                       )}
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label="Editar"
+                        onClick={() => setEditing(p)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
                       <Button
                         size="sm"
                         variant="secondary"
@@ -309,59 +276,13 @@ export function ProductsClient({ products }: { products: CrochetProduct[] }) {
                       </Button>
                     </div>
                   </div>
-                  <label className="flex cursor-pointer items-center gap-2 rounded-xl bg-cream/80 px-3 py-2.5 text-sm">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-rose-dust/40"
-                      checked={soldOut}
-                      disabled={pending || (ready <= 0 && sold <= 0)}
-                      onChange={(e) => {
-                        const wantSold = e.target.checked;
-                        startTransition(async () => {
-                          if (wantSold) {
-                            let lastError: string | undefined;
-                            for (let i = 0; i < ready; i++) {
-                              const res = await markProductSold(p.id, true);
-                              if (res.error) {
-                                lastError = res.error;
-                                break;
-                              }
-                            }
-                            if (lastError) toast.error(lastError);
-                            else toast.success("Marcado como vendido");
-                          } else {
-                            let lastError: string | undefined;
-                            for (let i = 0; i < sold; i++) {
-                              const res = await markProductSold(p.id, false);
-                              if (res.error) {
-                                lastError = res.error;
-                                break;
-                              }
-                            }
-                            if (lastError) toast.error(lastError);
-                            else toast.success("De vuelta a listos");
-                          }
-                        });
-                      }}
+                  {ready > 0 && (
+                    <SellProductDialog
+                      product={p}
+                      accounts={cashAccounts}
+                      pending={pending}
+                      startTransition={startTransition}
                     />
-                    <span className="font-medium">Ya vendí este producto</span>
-                  </label>
-                  {ready > 1 && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="w-full"
-                      disabled={pending}
-                      onClick={() =>
-                        startTransition(async () => {
-                          const res = await markProductSold(p.id, true);
-                          if (res.error) toast.error(res.error);
-                          else toast.success("Vendí 1");
-                        })
-                      }
-                    >
-                      Vendí solo 1
-                    </Button>
                   )}
                 </CardContent>
               </Card>
@@ -369,7 +290,249 @@ export function ProductsClient({ products }: { products: CrochetProduct[] }) {
           })}
         </div>
       )}
+
+      {editing && (
+        <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar hecho</DialogTitle>
+            </DialogHeader>
+            <ProductForm
+              initial={editing}
+              pending={pending}
+              onSubmit={(data) => {
+                startTransition(async () => {
+                  const res = await upsertProduct({
+                    id: editing.id,
+                    ...data,
+                    sold_count: editing.sold_count ?? 0,
+                  });
+                  if (res.error) toast.error(res.error);
+                  else {
+                    toast.success("Hecho actualizado");
+                    setEditing(null);
+                  }
+                });
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
+  );
+}
+
+function ProductForm({
+  initial,
+  pending,
+  onSubmit,
+}: {
+  initial?: CrochetProduct;
+  pending: boolean;
+  onSubmit: (data: {
+    name: string;
+    suggested_price: number | null;
+    estimated_hours: null;
+    materials_cost_estimate: number;
+    stock: number;
+    is_custom_base: boolean;
+    notes: string | null;
+  }) => void;
+}) {
+  return (
+    <form
+      className="space-y-3"
+      action={(fd) => {
+        onSubmit({
+          name: String(fd.get("name")),
+          suggested_price: Number(fd.get("suggested_price") || 0) || null,
+          estimated_hours: null,
+          materials_cost_estimate: 0,
+          stock: Number(fd.get("stock") || 1),
+          is_custom_base: false,
+          notes: String(fd.get("notes") || "") || null,
+        });
+      }}
+    >
+      <div className="space-y-1.5">
+        <Label htmlFor="name">Qué hiciste</Label>
+        <Input
+          id="name"
+          name="name"
+          required
+          defaultValue={initial?.name ?? ""}
+          placeholder="Ej. Llavero Zoro, flor tejida…"
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="stock">Cuántos tienes listos</Label>
+          <Input
+            id="stock"
+            name="stock"
+            type="number"
+            min={0}
+            defaultValue={initial?.stock ?? 1}
+            required
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="suggested_price">Precio (opcional)</Label>
+          <Input
+            id="suggested_price"
+            name="suggested_price"
+            type="number"
+            placeholder="₡"
+            defaultValue={initial?.suggested_price ?? ""}
+          />
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="notes">Nota (opcional)</Label>
+        <Input
+          id="notes"
+          name="notes"
+          placeholder="Color, tamaño…"
+          defaultValue={initial?.notes ?? ""}
+        />
+      </div>
+      <Button type="submit" className="w-full" disabled={pending}>
+        Guardar
+      </Button>
+    </form>
+  );
+}
+
+function SellProductDialog({
+  product,
+  accounts,
+  pending,
+  startTransition,
+}: {
+  product: CrochetProduct;
+  accounts: Account[];
+  pending: boolean;
+  startTransition: (fn: () => void) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ready = product.stock ?? 0;
+  const defaultAmount =
+    product.suggested_price != null ? product.suggested_price : "";
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" className="w-full" variant="secondary">
+          Registrar venta
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Vender {product.name}</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-ink-muted">
+          Baja del inventario y suma la plata a tu cuenta.
+        </p>
+        <form
+          className="space-y-3"
+          action={(fd) => {
+            startTransition(async () => {
+              const res = await sellProduct({
+                product_id: product.id,
+                quantity: Number(fd.get("quantity") || 1),
+                amount: Number(fd.get("amount") || 0),
+                account_id: String(fd.get("account_id")),
+                method:
+                  (String(fd.get("method") || "") as PaymentMethod) || null,
+                date: String(fd.get("date") || toISODate(new Date())),
+                note: String(fd.get("note") || "") || null,
+              });
+              if (res.error) toast.error(res.error);
+              else {
+                toast.success("Venta registrada en tu cuenta");
+                setOpen(false);
+              }
+            });
+          }}
+        >
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor={`qty-${product.id}`}>Cuántos</Label>
+              <Input
+                id={`qty-${product.id}`}
+                name="quantity"
+                type="number"
+                min={1}
+                max={ready}
+                defaultValue={1}
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor={`amt-${product.id}`}>Te pagaron (₡)</Label>
+              <Input
+                id={`amt-${product.id}`}
+                name="amount"
+                type="number"
+                min={1}
+                defaultValue={defaultAmount}
+                required
+              />
+            </div>
+          </div>
+          <label className="block space-y-1 text-sm">
+            <span>¿A qué cuenta entró?</span>
+            <select
+              name="account_id"
+              required
+              className="flex h-11 w-full rounded-xl border border-rose-dust/25 bg-paper px-3 text-sm"
+              defaultValue={
+                accounts.find((a) => a.type === "bank")?.id ?? accounts[0]?.id
+              }
+            >
+              {accounts.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block space-y-1 text-sm">
+            <span>¿Cómo te pagaron?</span>
+            <select
+              name="method"
+              className="flex h-11 w-full rounded-xl border border-rose-dust/25 bg-paper px-3 text-sm"
+              defaultValue="sinpe"
+            >
+              {(Object.keys(PAYMENT_METHOD_LABELS) as PaymentMethod[]).map(
+                (m) => (
+                  <option key={m} value={m}>
+                    {PAYMENT_METHOD_LABELS[m]}
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+          <div className="space-y-1.5">
+            <Label htmlFor={`date-${product.id}`}>Fecha</Label>
+            <Input
+              id={`date-${product.id}`}
+              name="date"
+              type="date"
+              defaultValue={toISODate(new Date())}
+              required
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor={`note-${product.id}`}>Nota (opcional)</Label>
+            <Input id={`note-${product.id}`} name="note" />
+          </div>
+          <Button type="submit" className="w-full" disabled={pending}>
+            Guardar venta
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

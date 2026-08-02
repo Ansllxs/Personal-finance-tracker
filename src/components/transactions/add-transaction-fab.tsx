@@ -24,11 +24,13 @@ export function AddTransactionFab({
   categories,
   goals,
   defaultOpen = false,
+  suggestedBecaAmount = 0,
 }: {
   accounts: Account[];
   categories: Category[];
   goals: Goal[];
   defaultOpen?: boolean;
+  suggestedBecaAmount?: number;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const [mode, setMode] = useState<Mode>("gasto");
@@ -105,6 +107,7 @@ export function AddTransactionFab({
             <QuickIncomeForm
               accounts={accounts}
               categories={categories}
+              suggestedBecaAmount={suggestedBecaAmount}
               onSuccess={() => setOpen(false)}
             />
           </>

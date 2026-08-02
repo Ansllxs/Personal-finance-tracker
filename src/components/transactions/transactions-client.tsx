@@ -46,12 +46,16 @@ export function TransactionsClient({
   categories,
   goals,
   defaultTypeFilter = "all",
+  from,
+  to,
 }: {
   transactions: Transaction[];
   accounts: Account[];
   categories: Category[];
   goals: Goal[];
   defaultTypeFilter?: string;
+  from?: string;
+  to?: string;
 }) {
   const [q, setQ] = useState("");
   const [type, setType] = useState<string>(defaultTypeFilter);
@@ -61,6 +65,8 @@ export function TransactionsClient({
 
   const filtered = useMemo(() => {
     return transactions.filter((tx) => {
+      if (from && tx.date < from) return false;
+      if (to && tx.date > to) return false;
       if (type !== "all" && tx.type !== type) return false;
       if (tag !== "all" && tx.tag !== tag) return false;
       if (q) {
@@ -69,7 +75,7 @@ export function TransactionsClient({
       }
       return true;
     });
-  }, [transactions, q, type, tag]);
+  }, [transactions, q, type, tag, from, to]);
 
   return (
     <div className="space-y-4">

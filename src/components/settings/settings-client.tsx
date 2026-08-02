@@ -117,7 +117,7 @@ export function SettingsClient({
                   display_name: String(fd.get("display_name")),
                   theme: (theme as "light" | "dark" | "system") || "light",
                   monthly_income_expected: Number(
-                    fd.get("monthly_income_expected") || 295000
+                    fd.get("monthly_income_expected") || 0
                   ),
                 });
                 if (res.error) toast.error(res.error);
@@ -150,7 +150,7 @@ export function SettingsClient({
                 id="monthly_income_expected"
                 name="monthly_income_expected"
                 type="number"
-                defaultValue={profile?.monthly_income_expected ?? 295000}
+                defaultValue={profile?.monthly_income_expected ?? 0}
               />
             </div>
             <div className="space-y-1.5">

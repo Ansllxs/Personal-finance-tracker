@@ -46,6 +46,8 @@ import type {
   PaymentMethod,
 } from "@/lib/types";
 
+type OrderFilter = "all" | "por_cobrar" | "activos" | OrderStatus;
+
 export function OrdersClient({
   orders,
   customers,
@@ -58,21 +60,68 @@ export function OrdersClient({
   accounts: Account[];
 }) {
   const [editing, setEditing] = useState<CrochetOrder | null>(null);
+  const [filter, setFilter] = useState<OrderFilter>("activos");
   const [pending, startTransition] = useTransition();
+
+  const filtered = orders.filter((order) => {
+    if (filter === "all") return true;
+    if (filter === "por_cobrar") {
+      return (
+        orderBalance(order) > 0 &&
+        order.status !== "cancelado"
+      );
+    }
+    if (filter === "activos") {
+      return ["consulta", "confirmado", "en_proceso", "listo"].includes(
+        order.status
+      );
+    }
+    return order.status === filter;
+  });
+
+  const filters: { key: OrderFilter; label: string }[] = [
+    { key: "activos", label: "Activos" },
+    { key: "por_cobrar", label: "Por cobrar" },
+    { key: "all", label: "Todos" },
+    { key: "en_proceso", label: "En proceso" },
+    { key: "listo", label: "Listo" },
+    { key: "entregado", label: "Entregado" },
+  ];
 
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
         <OrderDialog customers={customers} products={products} />
       </div>
+      <div className="flex flex-wrap gap-2">
+        {filters.map((f) => (
+          <button
+            key={f.key}
+            type="button"
+            onClick={() => setFilter(f.key)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+              filter === f.key
+                ? "border-rose-dust bg-rose-mist text-rose-deep"
+                : "border-rose-dust/20 bg-paper text-ink-muted"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
       {orders.length === 0 ? (
         <EmptyState
           title="Sin pedidos"
-          description="Registra un encargo: qué es, cuánto cuesta y si ya te pagaron algo."
+          description="Registra un encargo. Cuando te paguen, usa Registrar pago para que sume en tu cuenta."
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title="Nada en este filtro"
+          description="Prueba otro filtro o crea un pedido."
         />
       ) : (
         <div className="space-y-3">
-          {orders.map((order) => (
+          {filtered.map((order) => (
             <Card key={order.id}>
               <CardContent className="space-y-3 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -81,6 +130,9 @@ export function OrdersClient({
                     <p className="text-xs text-ink-muted">
                       {order.customer?.name ?? "Sin cliente"}
                       {order.product ? ` · ${order.product.name}` : ""}
+                      {order.delivery_date
+                        ? ` · entrega ${order.delivery_date}`
+                        : ""}
                     </p>
                   </div>
                   <Badge>{ORDER_STATUS_LABELS[order.status]}</Badge>
@@ -100,7 +152,7 @@ export function OrdersClient({
                   </div>
                 </div>
                 <p className="text-[11px] text-ink-muted">
-                  Para que el pago sume en tu cuenta:{" "}
+                  La plata solo entra a tu cuenta con{" "}
                   <strong className="font-medium text-ink">Registrar pago</strong>.
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -150,7 +202,7 @@ export function OrdersClient({
         </div>
       )}
 
-{editing && (
+      {editing && (
         <OrderDialog
           customers={customers}
           products={products}
@@ -209,7 +261,8 @@ function OrderDialog({
                 requested_date: String(fd.get("requested_date") || "") || null,
                 delivery_date: String(fd.get("delivery_date") || "") || null,
                 agreed_price: Number(fd.get("agreed_price") || 0),
-                advance_received: Number(fd.get("advance_received") || 0),
+                // Solo se actualiza con Registrar pago (no inventar cobros aquí)
+                advance_received: initial?.advance_received ?? 0,
                 status: String(fd.get("status")) as OrderStatus,
                 payment_method:
                   (String(fd.get("payment_method") || "") as PaymentMethod) ||
@@ -270,26 +323,28 @@ function OrderDialog({
               </select>
             </label>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="agreed_price">Precio</Label>
-              <Input
-                id="agreed_price"
-                name="agreed_price"
-                type="number"
-                required
-                defaultValue={initial?.agreed_price ?? ""}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="advance_received">Ya pagado</Label>
-              <Input
-                id="advance_received"
-                name="advance_received"
-                type="number"
-                defaultValue={initial?.advance_received ?? 0}
-              />
-            </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="agreed_price">Precio</Label>
+            <Input
+              id="agreed_price"
+              name="agreed_price"
+              type="number"
+              required
+              defaultValue={initial?.agreed_price ?? ""}
+            />
+            {isEdit && (initial?.advance_received ?? 0) > 0 && (
+              <p className="text-xs text-ink-muted">
+                Ya cobrado: ₡
+                {initial!.advance_received.toLocaleString("es-CR")} (vía
+                Registrar pago)
+              </p>
+            )}
+            {!isEdit && (
+              <p className="text-xs text-ink-muted">
+                Si ya te pagaron algo, después usa Registrar pago para que sume
+                en tu cuenta.
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">

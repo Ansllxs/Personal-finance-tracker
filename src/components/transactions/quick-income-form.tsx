@@ -13,10 +13,12 @@ import type { Account, Category, PaymentMethod } from "@/lib/types";
 export function QuickIncomeForm({
   accounts,
   categories,
+  suggestedBecaAmount = 0,
   onSuccess,
 }: {
   accounts: Account[];
   categories: Category[];
+  suggestedBecaAmount?: number;
   onSuccess?: () => void;
 }) {
   const [pending, startTransition] = useTransition();
@@ -30,6 +32,9 @@ export function QuickIncomeForm({
   const incomeCategories = useMemo(
     () => categories.filter((c) => c.type === "income"),
     [categories]
+  );
+  const becaCategory = incomeCategories.find((c) =>
+    c.name.toLowerCase().includes("beca")
   );
 
   const cashAccounts = useMemo(
@@ -79,8 +84,34 @@ export function QuickIncomeForm({
     });
   }
 
+  function fillBeca() {
+    if (becaCategory) setCategoryId(becaCategory.id);
+    if (suggestedBecaAmount > 0) {
+      setAmount(String(suggestedBecaAmount));
+    }
+    setMethod("sinpe");
+    setNote("Beca U");
+    const bank = cashAccounts.find((a) => a.type === "bank");
+    if (bank) setAccountId(bank.id);
+    amountRef.current?.focus();
+  }
+
   return (
     <div className="space-y-5">
+      {becaCategory && (
+        <Button
+          type="button"
+          variant="secondary"
+          className="w-full"
+          onClick={fillBeca}
+        >
+          Entró la beca
+          {suggestedBecaAmount > 0
+            ? ` · ${formatCRC(suggestedBecaAmount)}`
+            : ""}
+        </Button>
+      )}
+
       <div className="rounded-2xl bg-sage/30 p-4 text-center">
         <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">
           ¿Cuánto te entró?

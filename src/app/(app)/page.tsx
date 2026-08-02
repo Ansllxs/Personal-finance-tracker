@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Wallet } from "lucide-react";
 import { AddTransactionFab } from "@/components/transactions/add-transaction-fab";
 import { SpendToday } from "@/components/dashboard/spend-today";
+import { MonthNav } from "@/components/shared/month-nav";
 import { MoneyAmount } from "@/components/shared/money-amount";
 import { FlowerCorner, GinghamRibbon, ScrapWashi } from "@/components/shared/decorations";
 import { Button } from "@/components/ui/button";
@@ -19,14 +20,23 @@ import {
   monthPersonalIncome,
   personalAvailableBalance,
 } from "@/lib/finance";
-import { formatDateES, greetingForHour } from "@/lib/format";
+import { formatDateES, greetingForHour, monthNameES } from "@/lib/format";
 import { endOfMonth, startOfMonth, toISODate } from "@/lib/utils";
 
-export default async function DashboardPage() {
-  const data = await getDashboardData();
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string; year?: string }>;
+}) {
+  const sp = await searchParams;
   const now = new Date();
-  const from = toISODate(startOfMonth(now));
-  const to = toISODate(endOfMonth(now));
+  const month = Number(sp.month) || now.getMonth() + 1;
+  const year = Number(sp.year) || now.getFullYear();
+  const data = await getDashboardData();
+  const from = toISODate(startOfMonth(new Date(year, month - 1, 1)));
+  const to = toISODate(endOfMonth(new Date(year, month - 1, 1)));
+  const isCurrentMonth =
+    month === now.getMonth() + 1 && year === now.getFullYear();
 
   const { total: available, anyConfigured } = personalAvailableBalance(
     data.accounts
@@ -36,7 +46,9 @@ export default async function DashboardPage() {
   const name = data.profile?.display_name ?? "Angie";
 
   const recent = data.transactions
-    .filter((t) => t.tag === "personal")
+    .filter(
+      (t) => t.tag === "personal" && t.date >= from && t.date <= to
+    )
     .slice(0, 8);
 
   return (
@@ -59,11 +71,15 @@ export default async function DashboardPage() {
         </p>
       </section>
 
-      <SpendToday
-        transactions={data.transactions}
-        accounts={data.accounts}
-        categories={data.categories}
-      />
+      <MonthNav month={month} year={year} basePath="/" />
+
+      {isCurrentMonth && (
+        <SpendToday
+          transactions={data.transactions}
+          accounts={data.accounts}
+          categories={data.categories}
+        />
+      )}
 
       <section className="grid gap-3 sm:grid-cols-3">
         <Card>
@@ -91,7 +107,9 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Ingresos del mes</CardDescription>
+            <CardDescription>
+              Ingresos · {monthNameES(month)}
+            </CardDescription>
             <CardTitle className="text-base font-normal">
               <MoneyAmount amount={income} size="lg" />
             </CardTitle>
@@ -99,7 +117,9 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Gastos del mes</CardDescription>
+            <CardDescription>
+              Gastos · {monthNameES(month)}
+            </CardDescription>
             <CardTitle className="text-base font-normal">
               <MoneyAmount amount={-expenses} size="lg" signed />
             </CardTitle>
@@ -109,9 +129,11 @@ export default async function DashboardPage() {
 
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-lg">Últimos registros</CardTitle>
+          <CardTitle className="text-lg">
+            Registros · {monthNameES(month)}
+          </CardTitle>
           <Button asChild variant="ghost" size="sm">
-            <Link href="/movimientos">
+            <Link href={`/movimientos?month=${month}&year=${year}`}>
               Ver todos <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </Button>
@@ -119,8 +141,8 @@ export default async function DashboardPage() {
         <CardContent>
           {recent.length === 0 ? (
             <p className="py-6 text-center text-sm text-ink-muted">
-              Todavía no hay nada. Toca <strong>Gasté</strong> para anotar el
-              primero.
+              Nada en {monthNameES(month).toLowerCase()}. Toca{" "}
+              <strong>Gasté</strong> o <strong>Me entró</strong>.
             </p>
           ) : (
             <ul className="divide-y divide-rose-dust/15">
@@ -159,6 +181,7 @@ export default async function DashboardPage() {
         accounts={data.accounts}
         categories={data.categories}
         goals={data.goals}
+        suggestedBecaAmount={data.profile?.monthly_income_expected ?? 0}
       />
     </div>
   );

@@ -128,6 +128,68 @@ export async function markProductSold(id: string, sold: boolean) {
   return { ok: true };
 }
 
+/** Vende hechos y registra el ingreso en una cuenta. */
+export async function sellProduct(input: {
+  product_id: string;
+  quantity: number;
+  amount: number;
+  account_id: string;
+  method?: PaymentMethod | null;
+  date?: string;
+  note?: string | null;
+}) {
+  const qty = Math.round(input.quantity || 0);
+  const amount = Math.round(input.amount || 0);
+  if (qty < 1) return { error: "Indica cuántos vendiste" };
+  if (amount <= 0) return { error: "Indica cuánto te pagaron" };
+  if (!input.account_id) return { error: "Elige a qué cuenta entró" };
+
+  const store = await readStore();
+  const product = store.crochet_products.find((p) => p.id === input.product_id);
+  if (!product) return { error: "Producto no encontrado" };
+  if (product.sold_count === undefined) product.sold_count = 0;
+  if (product.stock < qty) {
+    return { error: `Solo tienes ${product.stock} listo(s)` };
+  }
+
+  const now = new Date().toISOString();
+  const date = input.date || now.slice(0, 10);
+  const category = store.categories.find((c) => c.name === "Ventas");
+
+  product.stock -= qty;
+  product.sold_count += qty;
+  product.updated_at = now;
+
+  store.transactions.unshift({
+    id: newId(),
+    user_id: LOCAL_USER_ID,
+    date,
+    type: "crochet_income",
+    amount,
+    account_id: input.account_id,
+    category_id: category?.id ?? null,
+    to_account_id: null,
+    goal_id: null,
+    description:
+      input.note?.trim() ||
+      `Venta: ${product.name}${qty > 1 ? ` ×${qty}` : ""}`,
+    receipt_url: null,
+    payment_method: input.method || null,
+    tag: "crochet",
+    status: "confirmed",
+    crochet_order_id: null,
+    created_at: now,
+    updated_at: now,
+  });
+
+  await writeStore(store);
+  revalidateCrochet();
+  revalidatePath("/");
+  revalidatePath("/movimientos");
+  revalidatePath("/cuentas");
+  return { ok: true };
+}
+
 export async function deleteProduct(id: string) {
   const store = await readStore();
   store.crochet_products = store.crochet_products.filter((p) => p.id !== id);
