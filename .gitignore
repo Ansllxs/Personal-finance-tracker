@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-electron/
 /out/
 
 # production
@@ -38,6 +39,10 @@ yarn-error.log*
 
 # local data store (modo sin login)
 .data/
+
+# electron / desktop
+/dist-desktop/
+/dist/
 
 # vercel
 .vercel

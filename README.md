@@ -6,7 +6,7 @@ Registro personal en **colones (₡)**, en español, solo para ti.
 Sin inventar saldos: tú dices cuánto tienes; la app solo cuenta lo que vas anotando.
 
 Hecha con calma: rosa empolvado, crema, gingham suave y esa vibra scrapbook / coquette.  
-Funciona en Mac e iPhone, y la puedes poner en la pantalla de inicio como app.
+Puedes usarla en el navegador o como **app de escritorio en Mac** — tus datos se guardan siempre en tu máquina.
 
 > *Cuidar tu dinero también es cuidarte a ti.*
 
@@ -22,15 +22,43 @@ npm run dev
 Luego abre [http://localhost:3000](http://localhost:3000)  
 Entras directo — **sin login**, sin drama.
 
-Tus datos se guardan solitos en `.data/store.json` (no se suben a git).  
-Si es la primera vez, te deja cuentas en ₡0 listas para que tú pongas la verdad.
+En el navegador, los datos viven en `.data/store.json` (no se suben a git).
 
 | Comando | Para qué |
 |---------|----------|
-| `npm run dev` | Abrir el taller |
-| `npm run build` | Empacar para producción |
-| `npm run start` | Servir lo empacado |
+| `npm run dev` | Navegador en desarrollo |
+| `npm run desktop` | **App de escritorio** (ventana propia) |
+| `npm run desktop:prod` | Escritorio con build de producción |
+| `npm run desktop:pack` | Generar `.dmg` / `.app` instalable |
+| `npm run build` | Build web |
 | `npm run lint` | Revisar el código |
+
+---
+
+## App de escritorio (Mac)
+
+```bash
+npm install
+npm run desktop
+```
+
+Se abre una ventana de **Finance Tracker** (puede tardar un poco la primera vez).  
+Cada cambio se guarda al instante en:
+
+`~/Library/Application Support/Finance Tracker/data/store.json`
+
+Si ya tenías datos en `.data/` del proyecto, la primera vez los **migra** solos a esa carpeta.
+
+> Puedes tener el navegador (`npm run dev`) y el escritorio abiertos a la vez; usan carpetas distintas.
+
+### Instalable (.dmg)
+
+```bash
+npm run desktop:pack
+```
+
+El instalador queda en `dist-desktop/`.  
+(Puede pedir permisos de red la primera vez que Electron descarga binarios.)
 
 ---
 
@@ -104,17 +132,17 @@ En **Crochet** ves ventas del mes, pedidos activos, por cobrar y entregas de la 
 
 ## Detrás del telón (poquito técnico)
 
-**Stack:** Next.js 16 · TypeScript · Tailwind · shadcn-ish UI · Recharts · Lucide  
-**Datos:** locales (JSON). Supabase queda como opción a futuro.
+**Stack:** Next.js 16 · TypeScript · Tailwind · Electron (escritorio) · Recharts · Lucide  
+**Datos:** JSON local — en web `.data/`; en escritorio `~/Library/Application Support/Finance Tracker/data/`.
 
 ```
-src/
-  app/(app)/       → las pantallas
-  components/      → pedacitos de UI
-  lib/             → lógica, acciones, store local
+src/               → pantallas y lógica
+electron/          → app de escritorio (ventana Mac)
+scripts/           → prepare del empaquetado
 public/            → PWA e iconitos
 supabase/          → SQL opcional
-.data/             → tus datos (no versionar)
+.data/             → datos del modo navegador (no versionar)
+dist-desktop/      → .dmg / .app al empaquetar
 ```
 
 ### PWA (app en el bolsillo)

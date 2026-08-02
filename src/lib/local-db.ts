@@ -47,8 +47,17 @@ export type LocalStore = {
   crochet_business_expenses: CrochetBusinessExpense[];
 };
 
-const DATA_DIR = path.join(process.cwd(), ".data");
-const STORE_PATH = path.join(DATA_DIR, "store.json");
+/** En Electron: carpeta de la app; en web/dev: .data del proyecto */
+function getDataDir() {
+  return (
+    process.env.FINANCE_TRACKER_DATA_DIR ||
+    path.join(process.cwd(), ".data")
+  );
+}
+
+function getStorePath() {
+  return path.join(getDataDir(), "store.json");
+}
 
 function nowIso() {
   return new Date().toISOString();
@@ -88,7 +97,7 @@ function emptyStore(): LocalStore {
 }
 
 async function ensureDir() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.mkdir(getDataDir(), { recursive: true });
 }
 
 /** SINPE no es cuenta: se fusiona con el banco. */
@@ -166,7 +175,7 @@ function migrateSinpeIntoBank(store: LocalStore): boolean {
 export async function readStore(): Promise<LocalStore> {
   await ensureDir();
   try {
-    const raw = await fs.readFile(STORE_PATH, "utf8");
+    const raw = await fs.readFile(getStorePath(), "utf8");
     const store = { ...emptyStore(), ...JSON.parse(raw) } as LocalStore;
     if (migrateSinpeIntoBank(store)) {
       await writeStore(store);
@@ -181,7 +190,7 @@ export async function readStore(): Promise<LocalStore> {
 
 export async function writeStore(store: LocalStore) {
   await ensureDir();
-  await fs.writeFile(STORE_PATH, JSON.stringify(store, null, 2), "utf8");
+  await fs.writeFile(getStorePath(), JSON.stringify(store, null, 2), "utf8");
 }
 
 export async function updateStore(
