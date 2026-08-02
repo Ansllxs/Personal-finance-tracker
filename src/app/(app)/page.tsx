@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Wallet } from "lucide-react";
 import { AddTransactionFab } from "@/components/transactions/add-transaction-fab";
+import { GoalsSnapshot } from "@/components/dashboard/goals-snapshot";
 import { SpendToday } from "@/components/dashboard/spend-today";
 import { MonthNav } from "@/components/shared/month-nav";
 import { MoneyAmount } from "@/components/shared/money-amount";
@@ -67,7 +68,8 @@ export default async function DashboardPage({
           Tu dinero
         </h1>
         <p className="mt-1 text-sm text-ink-muted">
-          Usa <strong className="text-ink">Sumar</strong>: Gasté o Me entró.
+          Usa <strong className="text-ink">Sumar</strong>: Gasté, Me entró o
+          Meta.
         </p>
       </section>
 
@@ -126,6 +128,8 @@ export default async function DashboardPage({
           </CardHeader>
         </Card>
       </section>
+
+      <GoalsSnapshot goals={data.goals} accounts={data.accounts} />
 
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">

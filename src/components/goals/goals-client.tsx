@@ -37,6 +37,7 @@ import {
   upsertGoal,
   upsertWishlistItem,
 } from "@/lib/actions/goals";
+import { QuickGoalForm } from "@/components/transactions/quick-goal-form";
 import { PRIORITY_LABELS, WISHLIST_STATUS_LABELS } from "@/lib/constants";
 import { clampPercent } from "@/lib/utils";
 import type {
@@ -75,7 +76,12 @@ export function GoalsClient({
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {goals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal} />
+              <GoalCard
+                key={goal.id}
+                goal={goal}
+                goals={goals}
+                accounts={accounts}
+              />
             ))}
           </div>
         )}
@@ -102,8 +108,17 @@ export function GoalsClient({
   );
 }
 
-function GoalCard({ goal }: { goal: Goal }) {
+function GoalCard({
+  goal,
+  goals,
+  accounts,
+}: {
+  goal: Goal;
+  goals: Goal[];
+  accounts: Account[];
+}) {
   const [pending, startTransition] = useTransition();
+  const [contributeOpen, setContributeOpen] = useState(false);
   const pct = clampPercent((goal.saved_amount / goal.target_amount) * 100);
 
   return (
@@ -156,11 +171,36 @@ function GoalCard({ goal }: { goal: Goal }) {
         </div>
         <Progress value={pct} />
         <p className="text-xs text-ink-muted">
-          {Math.round(pct)}% · Usa “Aporte a meta” en Movimientos para registrar
-          avances.
+          {Math.round(pct)}% · El aporte se rebaja de tu cuenta.
         </p>
-        {goal.is_completed && <Badge variant="ok">¡Completada!</Badge>}
+        {goal.is_completed ? (
+          <Badge variant="ok">¡Completada!</Badge>
+        ) : (
+          <Button
+            size="sm"
+            className="w-full"
+            variant="secondary"
+            onClick={() => setContributeOpen(true)}
+          >
+            Aportar
+          </Button>
+        )}
       </CardContent>
+
+      <Dialog open={contributeOpen} onOpenChange={setContributeOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Aporte · {goal.name}</DialogTitle>
+          </DialogHeader>
+          <QuickGoalForm
+            key={goal.id}
+            accounts={accounts}
+            goals={goals}
+            defaultGoalId={goal.id}
+            onSuccess={() => setContributeOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
