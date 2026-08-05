@@ -1,46 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  /* Vibes scrapbook / coquette: rosa, crema, gingham azul, salvia */
-  --cream: #f7f0ea;
-  --paper: #fffaf4;
-  --rose-mist: #f0ddd8;
-  --rose-dust: #d4a5a5;
-  --rose-deep: #b87b7b;
-  --lavender: #c5c0d9;
-  --lavender-soft: #a8b8d4;
-  --cornflower: #9eb6d4;
-  --sage: #c5d1c0;
-  --ink: #4a3f3f;
-  --ink-muted: #8a7a7a;
-  --amber-soft: #f0e0c8;
-  --grid-line: rgba(212, 165, 165, 0.14);
-  --gingham: rgba(158, 182, 212, 0.22);
+  /* Fintech limpio: slate + teal */
+  --cream: #f7f8fa;
+  --paper: #ffffff;
+  --rose-mist: #e6f2f1;
+  --rose-dust: #0f766e;
+  --rose-deep: #0d5f59;
+  --lavender: #64748b;
+  --lavender-soft: #94a3b8;
+  --cornflower: #475569;
+  --sage: #34d399;
+  --ink: #0f172a;
+  --ink-muted: #64748b;
+  --amber-soft: #fef3c7;
+  --grid-line: rgba(15, 23, 42, 0.04);
+  --gingham: rgba(15, 118, 110, 0.08);
   --background: var(--cream);
   --foreground: var(--ink);
-  --shadow-soft: 0 10px 32px rgba(184, 123, 123, 0.14);
-  --shadow-fab: 0 10px 30px rgba(184, 123, 123, 0.35);
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
+  --shadow-fab: 0 4px 16px rgba(15, 118, 110, 0.28);
 }
 
 .dark {
-  --cream: #2a2426;
-  --paper: #342e30;
-  --rose-mist: #4a383a;
-  --rose-dust: #c99595;
-  --rose-deep: #e0b0b0;
-  --lavender: #9a94b0;
-  --lavender-soft: #8a96ad;
-  --cornflower: #7a8fad;
-  --sage: #8fa38a;
-  --gingham: rgba(122, 143, 173, 0.2);
-  --ink: #f5ebe8;
-  --ink-muted: #c4b4b0;
-  --amber-soft: #5a4a38;
-  --grid-line: rgba(201, 149, 149, 0.12);
+  --cream: #0f1419;
+  --paper: #1a222c;
+  --rose-mist: #163a38;
+  --rose-dust: #2dd4bf;
+  --rose-deep: #5eead4;
+  --lavender: #94a3b8;
+  --lavender-soft: #64748b;
+  --cornflower: #cbd5e1;
+  --sage: #34d399;
+  --gingham: rgba(45, 212, 191, 0.12);
+  --ink: #f1f5f9;
+  --ink-muted: #94a3b8;
+  --amber-soft: #422006;
+  --grid-line: rgba(241, 245, 249, 0.06);
   --background: var(--cream);
   --foreground: var(--ink);
-  --shadow-soft: 0 8px 28px rgba(0, 0, 0, 0.35);
-  --shadow-fab: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-fab: 0 4px 18px rgba(0, 0, 0, 0.45);
 }
 
 @theme inline {
@@ -58,15 +58,15 @@
   --color-amber-soft: var(--amber-soft);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-nunito);
-  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-dm-sans);
   --shadow-soft: var(--shadow-soft);
   --shadow-fab: var(--shadow-fab);
 }
 
 @layer base {
   * {
-    border-color: color-mix(in srgb, var(--rose-dust) 25%, transparent);
+    border-color: color-mix(in srgb, var(--ink) 10%, transparent);
   }
 
   html {
@@ -76,7 +76,7 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: var(--font-nunito), system-ui, sans-serif;
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
     min-height: 100dvh;
   }
 
@@ -84,7 +84,8 @@
   h2,
   h3,
   .font-display {
-    font-family: var(--font-fraunces), Georgia, serif;
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 
   :focus-visible {
@@ -93,50 +94,26 @@
   }
 }
 
-/* Papel cuadriculado + atmósfera scrapbook */
+/* Fondo app: sólido + atmósfera sutil */
 .bg-scrapbook {
   background-color: var(--cream);
   background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
-    radial-gradient(ellipse at top right, rgba(158, 182, 212, 0.2), transparent 45%),
-    radial-gradient(ellipse at bottom left, rgba(197, 209, 192, 0.22), transparent 40%),
-    radial-gradient(ellipse at top left, rgba(212, 165, 165, 0.18), transparent 35%);
-  background-size:
-    22px 22px,
-    22px 22px,
-    100% 100%,
-    100% 100%,
-    100% 100%;
+    radial-gradient(ellipse at top right, rgba(15, 118, 110, 0.05), transparent 50%),
+    radial-gradient(ellipse at bottom left, rgba(71, 85, 105, 0.04), transparent 45%);
+  background-size: 100% 100%, 100% 100%;
 }
 
 .bg-lined {
-  background-image: repeating-linear-gradient(
-    transparent,
-    transparent 27px,
-    rgba(212, 165, 165, 0.15) 28px
-  );
+  background-image: none;
 }
 
-/* Acento gingham azul suave (como el collage) */
 .bg-gingham {
-  background-color: color-mix(in srgb, var(--paper) 70%, white);
-  background-image:
-    linear-gradient(90deg, var(--gingham) 1px, transparent 1px),
-    linear-gradient(var(--gingham) 1px, transparent 1px),
-    linear-gradient(90deg, transparent 50%, var(--gingham) 50%),
-    linear-gradient(transparent 50%, var(--gingham) 50%);
-  background-size: 14px 14px, 14px 14px, 28px 28px, 28px 28px;
+  background-color: var(--rose-mist);
+  background-image: none;
 }
 
 .bg-stripes-soft {
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent,
-    transparent 10px,
-    rgba(212, 165, 165, 0.12) 10px,
-    rgba(212, 165, 165, 0.12) 11px
-  );
+  background-image: none;
 }
 
 .lace-edge {
@@ -144,69 +121,37 @@
 }
 
 .lace-edge::after {
-  content: "";
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  bottom: -6px;
-  height: 8px;
-  background:
-    radial-gradient(circle at 6px 0, transparent 5px, color-mix(in srgb, var(--rose-dust) 35%, transparent) 5.5px) 0 0 / 12px 8px repeat-x;
-  opacity: 0.55;
-  pointer-events: none;
+  content: none;
 }
 
 .washi-strip {
-  height: 10px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--cornflower) 45%, transparent),
-    color-mix(in srgb, var(--rose-mist) 80%, transparent),
-    color-mix(in srgb, var(--sage) 50%, transparent)
-  );
-  opacity: 0.75;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+  display: none;
 }
 
 .flower-deco {
-  pointer-events: none;
-  user-select: none;
-  opacity: 0.35;
+  display: none;
 }
 
 .animate-fade-up {
-  animation: fadeUp 0.55s ease-out both;
+  animation: fadeUp 0.4s ease-out both;
 }
 
 .animate-fade-up-delay {
-  animation: fadeUp 0.65s ease-out 0.08s both;
+  animation: fadeUp 0.45s ease-out 0.06s both;
 }
 
 .animate-soft-pulse {
-  animation: softPulse 2.8s ease-in-out infinite;
+  animation: none;
 }
 
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes softPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: var(--shadow-fab);
-  }
-  50% {
-    transform: scale(1.03);
-    box-shadow: 0 12px 34px rgba(184, 123, 123, 0.45);
   }
 }
 

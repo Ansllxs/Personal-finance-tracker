@@ -107,12 +107,12 @@ export function QuickGoalForm({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-lavender/25 p-4 text-center">
+      <div className="rounded-xl bg-lavender/10 p-4 text-center">
         <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">
-          ¿Cuánto aportas a la meta?
+          Monto del aporte
         </p>
         <div className="mt-2 flex items-center justify-center gap-1">
-          <span className="font-display text-3xl text-ink">₡</span>
+          <span className="text-3xl font-semibold text-ink">₡</span>
           <Input
             ref={amountRef}
             type="text"
@@ -122,7 +122,7 @@ export function QuickGoalForm({
             value={amount}
             onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ""))}
             placeholder="0"
-            className="h-16 border-0 bg-transparent text-center font-display text-4xl font-semibold tabular-nums shadow-none focus-visible:ring-0 md:text-4xl"
+            className="h-16 border-0 bg-transparent text-center text-4xl font-semibold tabular-nums shadow-none focus-visible:ring-0 md:text-4xl"
             aria-label="Monto del aporte"
           />
         </div>

@@ -15,7 +15,7 @@ export default async function MetasPage() {
     <div>
       <PageHeader
         title="Metas y Wishlist"
-        description="Guarda con cariño hacia Lisboa, el iPad, el televisor… o lo que sueñes después."
+        description="Ahorros y wishlist con montos claros y progreso visible."
       />
       <GoalsClient goals={goals} wishlist={wishlist} accounts={accounts} />
     </div>

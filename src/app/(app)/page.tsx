@@ -5,7 +5,6 @@ import { GoalsSnapshot } from "@/components/dashboard/goals-snapshot";
 import { SpendToday } from "@/components/dashboard/spend-today";
 import { MonthNav } from "@/components/shared/month-nav";
 import { MoneyAmount } from "@/components/shared/money-amount";
-import { FlowerCorner, GinghamRibbon, ScrapWashi } from "@/components/shared/decorations";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -54,22 +53,16 @@ export default async function DashboardPage({
 
   return (
     <div className="relative space-y-5 pb-24">
-      <FlowerCorner className="absolute -right-2 -top-2 h-20 w-20 opacity-30" />
-
       <section className="animate-fade-up">
-        <div className="mb-3 flex items-center gap-2">
-          <ScrapWashi />
-          <GinghamRibbon />
-        </div>
         <p className="text-sm text-ink-muted">
           {greetingForHour()}, {name}
         </p>
-        <h1 className="font-display text-3xl font-semibold text-ink">
-          Tu dinero
+        <h1 className="text-3xl font-semibold tracking-tight text-ink">
+          Resumen
         </h1>
         <p className="mt-1 text-sm text-ink-muted">
-          Usa <strong className="text-ink">Sumar</strong>: Gasté, Me entró o
-          Meta.
+          Registra con <strong className="text-ink">Sumar</strong>: gasto,
+          ingreso o aporte a meta.
         </p>
       </section>
 
@@ -145,11 +138,11 @@ export default async function DashboardPage({
         <CardContent>
           {recent.length === 0 ? (
             <p className="py-6 text-center text-sm text-ink-muted">
-              Nada en {monthNameES(month).toLowerCase()}. Toca{" "}
-              <strong>Gasté</strong> o <strong>Me entró</strong>.
+              Sin movimientos en {monthNameES(month).toLowerCase()}. Usa{" "}
+              <strong>Sumar</strong> para registrar un gasto o ingreso.
             </p>
           ) : (
-            <ul className="divide-y divide-rose-dust/15">
+            <ul className="divide-y divide-ink/8">
               {recent.map((tx) => {
                 const isOut = !["income", "crochet_income"].includes(tx.type);
                 return (

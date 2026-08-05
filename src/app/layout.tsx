@@ -1,20 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Nunito } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { PwaRegister } from "@/components/pwa-register";
 import { APP_NAME } from "@/lib/constants";
 import "./globals.css";
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-});
-
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#D4A5A5",
+  themeColor: "#0F766E",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -53,7 +47,7 @@ export default function RootLayout({
     <html
       lang="es"
       suppressHydrationWarning
-      className={`${nunito.variable} ${fraunces.variable} h-full`}
+      className={`${dmSans.variable} h-full`}
     >
       <body className="min-h-full antialiased">
         <Providers>

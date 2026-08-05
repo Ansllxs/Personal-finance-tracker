@@ -45,7 +45,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("grid gap-1.5 pb-3 text-left", className)} {...props} />;
 }
 function SheetTitle({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Title>) {
-  return <DrawerPrimitive.Title className={cn("font-display text-lg font-semibold", className)} {...props} />;
+  return <DrawerPrimitive.Title className={cn("text-lg font-semibold tracking-tight", className)} {...props} />;
 }
 function SheetDescription({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Description>) {
   return <DrawerPrimitive.Description className={cn("text-sm text-ink-muted", className)} {...props} />;

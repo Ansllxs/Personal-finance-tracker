@@ -31,7 +31,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-rose-dust/20 bg-paper/95 pb-safe backdrop-blur-md lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-paper/95 pb-safe backdrop-blur-md lg:hidden"
       aria-label="Navegación móvil"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-7 px-0.5 pt-1">
@@ -46,7 +46,7 @@ export function BottomNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 rounded-xl px-0.5 py-2 text-[9px] font-medium leading-tight",
+                  "flex flex-col items-center gap-0.5 rounded-lg px-0.5 py-2 text-[9px] font-medium leading-tight",
                   active ? "text-rose-deep" : "text-ink-muted"
                 )}
                 aria-current={active ? "page" : undefined}

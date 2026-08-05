@@ -66,8 +66,8 @@ export function SettingsClient({
         <CardContent className="space-y-2 text-sm text-ink-muted">
           <p>
             1. Toca <strong className="text-ink">Sumar</strong> →{" "}
-            <strong className="text-ink">Gasté</strong> o{" "}
-            <strong className="text-ink">Me entró</strong>.
+            <strong className="text-ink">Gasto</strong> o{" "}
+            <strong className="text-ink">Ingreso</strong>.
           </p>
           <p>
             2. El disponible se calcula solo con lo que registres. En Cuentas

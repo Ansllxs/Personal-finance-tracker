@@ -109,12 +109,12 @@ export function QuickExpenseForm({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-rose-mist/50 p-4 text-center">
+      <div className="rounded-xl bg-rose-mist/60 p-4 text-center">
         <p className="text-xs font-medium uppercase tracking-wide text-rose-deep/80">
-          ¿Cuánto gastaste?
+          Monto del gasto
         </p>
         <div className="mt-2 flex items-center justify-center gap-1">
-          <span className="font-display text-3xl text-rose-deep">₡</span>
+          <span className="text-3xl font-semibold text-rose-deep">₡</span>
           <Input
             ref={amountRef}
             type="text"
@@ -124,7 +124,7 @@ export function QuickExpenseForm({
             value={amount}
             onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ""))}
             placeholder="0"
-            className="h-16 border-0 bg-transparent text-center font-display text-4xl font-semibold tabular-nums shadow-none focus-visible:ring-0 md:text-4xl"
+            className="h-16 border-0 bg-transparent text-center text-4xl font-semibold tabular-nums shadow-none focus-visible:ring-0 md:text-4xl"
             aria-label="Monto del gasto"
           />
         </div>

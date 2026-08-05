@@ -124,7 +124,7 @@ export function TransactionsClient({
           description="Prueba otro filtro o agrega un movimiento con el botón flotante."
         />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-rose-dust/20 bg-paper">
+        <div className="overflow-hidden rounded-xl border border-ink/8 bg-paper">
           <ul className="divide-y divide-rose-dust/15">
             {filtered.map((tx) => {
               const isOut = ![

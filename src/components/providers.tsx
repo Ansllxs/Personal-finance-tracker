@@ -11,7 +11,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         position="top-center"
         toastOptions={{
           className:
-            "!bg-paper !text-ink !border-rose-dust/25 !shadow-soft !rounded-xl",
+            "!bg-paper !text-ink !border-ink/10 !shadow-soft !rounded-lg",
         }}
       />
     </ThemeProvider>

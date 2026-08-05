@@ -29,7 +29,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border border-rose-dust/25 bg-paper p-5 shadow-soft",
+        "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl border border-ink/10 bg-paper p-5 shadow-soft",
         className
       )}
       {...props}
@@ -45,7 +45,7 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">)
   return <div className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)} {...props} />;
 }
 function AlertDialogTitle({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
-  return <AlertDialogPrimitive.Title className={cn("font-display text-lg font-semibold", className)} {...props} />;
+  return <AlertDialogPrimitive.Title className={cn("text-lg font-semibold tracking-tight", className)} {...props} />;
 }
 function AlertDialogDescription({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
   return <AlertDialogPrimitive.Description className={cn("text-sm text-ink-muted", className)} {...props} />;

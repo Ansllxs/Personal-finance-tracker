@@ -49,7 +49,7 @@ export function AddTransactionFab({
       <SheetTrigger asChild>
         <Button
           size="fab"
-          className="fixed bottom-20 right-4 z-30 animate-soft-pulse lg:bottom-8 lg:right-8"
+          className="fixed bottom-20 right-4 z-30 lg:bottom-8 lg:right-8"
           aria-label="Agregar movimiento"
         >
           <Plus className="h-5 w-5" />
@@ -62,33 +62,33 @@ export function AddTransactionFab({
             type="button"
             onClick={() => setMode("gasto")}
             className={cn(
-              "rounded-xl py-2.5 text-xs font-semibold sm:text-sm",
+              "rounded-lg py-2.5 text-xs font-semibold sm:text-sm",
               mode === "gasto"
                 ? "bg-rose-mist text-rose-deep"
                 : "bg-cream text-ink-muted"
             )}
           >
-            Gasté
+            Gasto
           </button>
           <button
             type="button"
             onClick={() => setMode("ingreso")}
             className={cn(
-              "rounded-xl py-2.5 text-xs font-semibold sm:text-sm",
+              "rounded-lg py-2.5 text-xs font-semibold sm:text-sm",
               mode === "ingreso"
-                ? "bg-sage/50 text-ink"
+                ? "bg-sage/25 text-ink"
                 : "bg-cream text-ink-muted"
             )}
           >
-            Me entró
+            Ingreso
           </button>
           <button
             type="button"
             onClick={() => setMode("meta")}
             className={cn(
-              "rounded-xl py-2.5 text-xs font-semibold sm:text-sm",
+              "rounded-lg py-2.5 text-xs font-semibold sm:text-sm",
               mode === "meta"
-                ? "bg-lavender/40 text-ink"
+                ? "bg-lavender/15 text-ink"
                 : "bg-cream text-ink-muted"
             )}
           >

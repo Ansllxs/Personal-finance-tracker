@@ -30,7 +30,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border border-rose-dust/25 bg-paper p-5 shadow-soft max-h-[90vh] overflow-y-auto",
+        "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl border border-ink/10 bg-paper p-5 shadow-soft max-h-[90vh] overflow-y-auto",
         className
       )}
       {...props}
@@ -52,7 +52,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)} {...props} />;
 }
 function DialogTitle({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title className={cn("font-display text-lg font-semibold", className)} {...props} />;
+  return <DialogPrimitive.Title className={cn("text-lg font-semibold tracking-tight", className)} {...props} />;
 }
 function DialogDescription({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) {
   return <DialogPrimitive.Description className={cn("text-sm text-ink-muted", className)} {...props} />;

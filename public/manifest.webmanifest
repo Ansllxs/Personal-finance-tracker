@@ -1,11 +1,11 @@
 {
   "name": "Finance Tracker",
   "short_name": "Finance Tracker",
-  "description": "Finanzas personales y crochet en colones. Privada, en español, con vibes scrapbook.",
+  "description": "Finanzas personales y crochet en colones. Privada, en español.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F7F0EA",
-  "theme_color": "#D4A5A5",
+  "background_color": "#F7F8FA",
+  "theme_color": "#0F766E",
   "orientation": "portrait-primary",
   "lang": "es",
   "icons": [

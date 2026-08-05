@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { APP_NAME, NAV_ITEMS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { FlowerCorner } from "@/components/shared/decorations";
 
 const ICONS = {
   Home,
@@ -33,13 +32,12 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-rose-dust/20 lg:bg-paper/80 lg:backdrop-blur-md">
-      <div className="relative border-b border-rose-dust/15 px-5 py-6">
-        <FlowerCorner className="absolute -right-1 -top-1 h-14 w-14 opacity-40" />
-        <p className="font-display text-xl font-semibold leading-tight text-rose-deep">
+    <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-ink/8 lg:bg-paper">
+      <div className="border-b border-ink/8 px-5 py-6">
+        <p className="text-xl font-semibold leading-tight tracking-tight text-ink">
           {APP_NAME}
         </p>
-        <p className="mt-1 text-xs text-ink-muted">Registro simple · ₡</p>
+        <p className="mt-1 text-xs text-ink-muted">Tus finanzas · ₡</p>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-3" aria-label="Principal">
         {NAV_ITEMS.map((item) => {
@@ -53,7 +51,7 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 active
                   ? "bg-rose-mist text-rose-deep"
                   : "text-ink-muted hover:bg-cream hover:text-ink"
@@ -66,8 +64,8 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="lace-edge mx-4 mb-6 rounded-xl bg-gingham px-3 py-3 text-xs text-ink-muted">
-        Hecho con calma · ₡
+      <div className="mx-4 mb-6 rounded-lg border border-ink/8 bg-cream px-3 py-3 text-xs text-ink-muted">
+        Finance Tracker · ₡
       </div>
     </aside>
   );

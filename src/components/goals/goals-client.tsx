@@ -122,8 +122,8 @@ function GoalCard({
   const pct = clampPercent((goal.saved_amount / goal.target_amount) * 100);
 
   return (
-    <Card className="overflow-hidden lace-edge">
-      <div className="h-20 bg-gradient-to-br from-rose-mist via-cream to-lavender/40" />
+    <Card className="overflow-hidden">
+      <div className="h-1.5 bg-rose-dust" />
       <CardHeader className="flex-row items-start justify-between gap-2 space-y-0">
         <CardTitle className="text-lg">{goal.name}</CardTitle>
         <AlertDialog>
